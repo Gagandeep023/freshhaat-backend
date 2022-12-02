@@ -1,5 +1,5 @@
 'use strict';
-
+var _ = require('lodash');
 const dashboardController = {};
 const DashboardServices = require('../service/dashboard.service');
 
@@ -17,13 +17,20 @@ dashboardController.getDetails = async (req, res) => {
   };
 
   dashboardController.addEntry = async (req, res) => {
-    const productName = req.body.product_name;
+    let productName = req.body.product_name;
+    productName = _.startCase(_.camelCase(productName))
     const quantity = req.body.quantity;
     const farmName = req.body.farm_name;
     const farmAddress = req.body.farm_address;
     const farmContact = req.body.farm_contact;
+    let cropTime = req.body.crop_time;
+    cropTime = new Date(cropTime).toISOString().replace('T', ' ').substring(0, 19);
+
+    // cropTime = Math.floor(date.getTime() / 1000);
+
+
     try {
-        const response = await DashboardServices.addVegetable(productName, quantity, farmName, farmAddress, farmContact);
+        const response = await DashboardServices.addVegetable(productName, quantity, farmName, farmAddress, farmContact, cropTime);
         res.send(response);
     } catch (err) {
 		console.log(err);

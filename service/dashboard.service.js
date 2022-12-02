@@ -9,17 +9,18 @@ DashboardServices.getVegetable = async (productId) => {
     return response;
 };
 
-  DashboardServices.addVegetable = async (productName, quantity, farmName, farmAddress, farmContact) => {
+  DashboardServices.addVegetable = async (productName, quantity, farmName, farmAddress, farmContact, cropTime) => {
+    console.log(productName);
     let productId = await DashboardDp.isProductThere(productName);
     let response;
     if((productId.length === 0)){
       productId= await DashboardDp.addProduct(productName);
       productId = productId.insertId
-      response = await DashboardDp.postDetails(productId, quantity, farmName, farmAddress, farmContact);
+      response = await DashboardDp.postDetails(productId, quantity, farmName, farmAddress, farmContact, cropTime);
 
     } else{
       productId = productId[0].id
-      response = await DashboardDp.updateDetails(productId, quantity, farmName, farmAddress, farmContact);
+      response = await DashboardDp.updateDetails(productId, quantity, farmName, farmAddress, farmContact, cropTime);
     }
     console.log(response);
     return response;
