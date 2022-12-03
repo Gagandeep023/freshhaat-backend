@@ -4,15 +4,14 @@ const queryPool = require('../models/db.connection');
 const symbolsDp = {
 
   postDetails: (productId, quantity, farmName, farmAddress, farmContact, cropTime) => {
-    let sql = `INSERT INTO farm_purchase (product_id, quantity, farm_name, farm_address, farm_contact, crop_time)
+    let sql = `INSERT INTO farm_purchase (product_id, farm_address, crop_time)
       VALUES ('${productId}', '${quantity}', '${farmName}', '${farmAddress}', '${farmContact}', '${cropTime}');`;
     return queryPool(sql);
   },
 
   updateDetails: (productId, quantity, farmName, farmAddress, farmContact, cropTime) => {
-    let sql = `UPDATE farm_purchase SET
-    quantity = '${quantity}', farm_name = '${farmName}', 
-    farm_address = '${farmAddress}', farm_contact = '${farmContact}', crop_time = '${cropTime}'
+    let sql = `UPDATE farm_purchase SET 
+    farm_address = '${farmAddress}', crop_time = '${cropTime}'
     WHERE product_id = '${productId}';`
     return queryPool(sql);
   },
@@ -30,10 +29,8 @@ const symbolsDp = {
     let sql = `select
     fp.product_id,
     pd.product_name,
-    fp.quantity,
-    fp.farm_name,
+    pd.product_image,
     fp.farm_address,
-    fp.farm_contact,
     fp.crop_time
   from
     farm_purchase fp

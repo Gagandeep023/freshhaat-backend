@@ -9,7 +9,7 @@ router.post("/details",
 router.get("/details", 
     dashboard.getDetails);
     
-router.get("/details/:productId",
+router.get("/details/productId/:productId",
     dashboard.getDetails);
 
 
