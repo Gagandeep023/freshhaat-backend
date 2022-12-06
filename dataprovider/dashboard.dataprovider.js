@@ -1,5 +1,5 @@
 'use strict';
-const queryPool = require('../models/db.connection');
+const queryPool = require('../directModels/db.connection');
 
 const symbolsDp = {
 
