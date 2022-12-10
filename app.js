@@ -1,5 +1,5 @@
 const express = require('express');
-const port = 3000;
+const port = 3500;
 const db = require("./models");
 const passport = require('passport');
 
