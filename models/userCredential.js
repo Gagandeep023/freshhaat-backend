@@ -21,6 +21,13 @@ module.exports = (sequelize, DataTypes) =>{
                 notEmpty: true,
             },
         },
+        roles:{
+            type:DataTypes.NUMBER,
+            allowNull: false,
+            validate:{
+                notEmpty: true,
+            },
+        },
     });
     return UserCredential;
 };

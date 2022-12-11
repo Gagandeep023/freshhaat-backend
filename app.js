@@ -2,15 +2,21 @@ const express = require('express');
 const port = 3500;
 const db = require("./models");
 const passport = require('passport');
+const cors = require('cors');
+const corsOptions = require('./config/corsOptions');
+const credentials = require('./middleware/credentials');
+const { logger } = require('./middleware/logEvents');
 
 const app = express();
-var cors = require('cors');
 
 require('./config/passport')(passport);
 app.use(passport.initialize());
 
+app.use(logger);
 
-app.use(cors())
+app.use(credentials);
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));

@@ -1,4 +1,5 @@
 const { UserCredential } = require("../models");
+const ROLES_LIST = require('../config/roles_list');
 
 const credentialUtils = require('../lib/credentialUtils');
 const userController = {};
@@ -19,7 +20,7 @@ userController.login = async (req, res, next) => {
     
                     const tokenObject = credentialUtils.issueJWT(user);
     
-                    res.status(200).json({ success: true, token: tokenObject.token, expiresIn: tokenObject.expires });
+                    res.status(200).json({success: true, accessToken: tokenObject.accessToken, expiresIn: tokenObject.expires, roles:tokenObject.roles});
     
                 } else {
     
@@ -49,14 +50,15 @@ userController.register = async (req, res, next) => {
         const newUser = new UserCredential({
             username: req.body.username,
             hash: hash,
-            salt: salt
+            salt: salt,
+            roles: ROLES_LIST.User,
         });
 
         try {
         
             newUser.save()
                 .then((user) => {
-                    res.json({ success: true, user: user });
+                    res.json({ success: true});
                 });
 
         } catch (err) {
