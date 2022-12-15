@@ -1,16 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const dashboard = require('../controlller/dashboard.controller');
+const CHECK_FOR_AUTHENTICATION = require('../lib/authentication');
 
 
-router.post("/details", 
-    dashboard.addEntry);
+router.get("/product-details",
+    dashboard.getProductDetails);
 
-router.get("/details", 
-    dashboard.getDetails);
+router.post("/details", CHECK_FOR_AUTHENTICATION,
+    dashboard.postProductDetails);
+
+router.get("/details", CHECK_FOR_AUTHENTICATION,
+    dashboard.getUserProductDetails);
     
-router.get("/details/productId/:productId",
-    dashboard.getDetails);
+router.get("/product-list", CHECK_FOR_AUTHENTICATION,
+    dashboard.getProductList);   
+    
 
 
 module.exports = router;

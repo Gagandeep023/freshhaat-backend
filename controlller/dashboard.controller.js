@@ -3,37 +3,53 @@ var _ = require('lodash');
 const dashboardController = {};
 const DashboardServices = require('../service/dashboard.service');
 
-dashboardController.getDetails = async (req, res) => {
-    let productId = req.params.productId;
-    productId = parseInt(productId);
+dashboardController.getUserProductDetails = async (req, res) => {
+    const userId = req.user.id;
 
     try {
-        const response = await DashboardServices.getVegetable(productId);
+        const response = await DashboardServices.getUserProductDetails(userId);
         res.send(response);
     } catch (err) {
 		console.log(err);
       return 'Unhandled Exception!!';
     }
   };
-
-  dashboardController.addEntry = async (req, res) => {
-    let productName = req.body.product_name;
-    productName = _.startCase(_.camelCase(productName))
-    // const quantity = req.body.quantity;
-    // const farmName = req.body.farm_name;
-    const farmAddress = req.body.farm_address;
-    // const farmContact = req.body.farm_contact;
-    let cropTime = req.body.crop_time;
-    cropTime = new Date(cropTime).toISOString().replace('T', ' ').substring(0, 19);
-
+  dashboardController.getProductDetails = async (req, res) => {
+    const productId = req.query.productId;
+    const productShopId = req.query.productShopId;
 
     try {
-        const response = await DashboardServices.addVegetable(productName, farmAddress, cropTime);
+        const response = await DashboardServices.getProductDetails(productId, productShopId);
         res.send(response);
     } catch (err) {
 		console.log(err);
       return 'Unhandled Exception!!';
     }
+  };
+  dashboardController.postProductDetails = async (req, res) => {
+    const productId = req.body.product_id;
+    const farmAddress = req.body.farm_address;
+    const cropTime = req.body.crop_time;
+    const userId = req.user.id;
+
+    try {
+        const response = await DashboardServices.UpdateVegetable(productId, userId, farmAddress, cropTime);
+        res.send(response);
+    } catch (err) {
+		console.log(err);
+      return 'Unhandled Exception!!';
+    }
+  };
+  dashboardController.getProductList = async (req, res) => {
+    const productShopId = req.query.productShopId;
+
+    try {
+      const response = await DashboardServices.getProductList(productShopId);
+      res.send(response);
+  } catch (err) {
+  console.log(err);
+    return 'Unhandled Exception!!';
+  }
   };
 
   module.exports = dashboardController;

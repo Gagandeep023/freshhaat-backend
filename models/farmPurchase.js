@@ -1,33 +1,33 @@
 module.exports = (sequelize, DataTypes) =>{
-    const UserCredential = sequelize.define("UserCredential", {
-        username:{
-            type:DataTypes.STRING,
-            allowNull: false,
-            validate:{
-                notEmpty: true,
-            },
-        },
-        hash:{
-            type:DataTypes.STRING,
-            allowNull: false,
-            validate:{
-                notEmpty: true,
-            },
-        },
-        salt:{
-            type:DataTypes.STRING,
-            allowNull: false,
-            validate:{
-                notEmpty: true,
-            },
-        },
-        roles:{
+    const FarmPurchase = sequelize.define("FarmPurchase", {
+        product_id:{
             type:DataTypes.INTEGER,
             allowNull: false,
             validate:{
                 notEmpty: true,
             },
         },
+        user_id:{
+            type:DataTypes.INTEGER,
+            allowNull: false,
+            validate:{
+                notEmpty: true,
+            },
+        },
+        farm_address:{
+            type:DataTypes.STRING,
+            allowNull: false,
+            validate:{
+                notEmpty: true,
+            },
+        },
+        crop_time:{
+            type:DataTypes.DATE,
+            allowNull: false,
+            validate:{
+                notEmpty: true,
+            },
+        },
     });
-    return UserCredential;
+    return FarmPurchase;
 };
