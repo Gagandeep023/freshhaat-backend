@@ -1,5 +1,7 @@
 'use strict';
 const queryPool = require('../directModels/db.connection');
+const { QueryTypes } = require('sequelize');
+const { sequelize } = require('../models');
 
 const symbolsDp = {
 
@@ -50,10 +52,16 @@ const symbolsDp = {
     fp.farm_address,
     fp.crop_time
   from
-    farm_purchase fp
-    join product_details pd on fp.product_id = pd.id
+  FarmPurchases fp
+    join ProductDetails pd on fp.product_id = pd.id
       WHERE fp.user_id = ${userId};`;
-    return await queryPool(sql);
+
+      return await sequelize.query(sql,
+        {
+          type: QueryTypes.SELECT
+        }
+      );
+    // return await queryPool(sql);
   },
 
 };

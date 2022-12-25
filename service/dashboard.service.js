@@ -4,9 +4,10 @@ const DashboardServices = {};
 const DashboardDp = require('../dataprovider/dashboard.dataprovider');
 const { ProductDetail } = require("../models");
 const { FarmPurchase } = require("../models");
+const { QrLinkage } = require("../models");
 
 DashboardServices.getVegetable2 = async (userId) => {
-    const response = await DashboardDp.getVegetable(userId);
+    const response = await DashboardDp.getVegetable2(userId);
     return response;
 };
 DashboardServices.getUserProductDetails = async ( userId) => {
@@ -33,6 +34,7 @@ DashboardServices.getProductDetails = async (productId, userId) => {
         await ProductDetail.findOne({where:{ id: productId }})
         .then((productDetail) => {
           response.product_image = productDetail.product_image;
+          response.product_name = productDetail.product_name;
         })
 
       } else {
@@ -40,8 +42,9 @@ DashboardServices.getProductDetails = async (productId, userId) => {
          
       }
     });
-  
-  return response;
+    const productDetails = {};
+    productDetails.productDetails =  response ;
+  return productDetails;
 };
   DashboardServices.addVegetable = async (productName, farmAddress, cropTime) => {
     console.log(productName);
@@ -138,5 +141,125 @@ DashboardServices.getProductList = async(productShopId) => {
       }
     });
     return response;
+};
+
+DashboardServices.postChangeQrLinkage = async (productId, shopId, qrId) => {
+  let response;
+    try {
+      await QrLinkage.update(
+        { 
+          shop_id: shopId,
+          product_id: productId,
+        },
+        { 
+         where:{ id: qrId } 
+        })
+        .then((updatedRecord) => {
+            response = { success: true, msg: `updated record ${updatedRecord}`};
+        })
+      
+    } catch (err) {
+      console.log(err);
+      return 'Unhandled Exception!!';    
+  
+  }
+  return response;
+
+};
+
+DashboardServices.changeQrCodeImage = async (qrImage, shopId, qrId) => {
+  let response;
+    try {
+      await QrLinkage.update(
+        { 
+          qr_image: qrImage
+        },
+        { 
+         where:{ shop_id: shopId, id: qrId } 
+        })
+        .then((updatedRecord) => {
+            response = { success: true, msg: `updated record ${updatedRecord}`};
+        })
+      
+    } catch (err) {
+      console.log(err);
+      return  response.status(401).json({ success: false, msg: 'Unhandled Exception!!' });
+      ;    
+  
+  }
+  return response;
+
+};
+
+
+DashboardServices.getCreatedQrCodeLinkage = async ( shopId ) => {
+  let response;
+  const qrName = `dummy-QR-name-${Math.floor(Math.random() * 10)}`
+  const newQrLinkage = new QrLinkage({
+    shop_id: shopId,
+    qr_name: qrName,
+  });
+
+  try {
+
+    await newQrLinkage.save()
+          .then(async () => {
+            await QrLinkage.findOne({where:{ shop_id: shopId, qr_name: qrName }})
+            .then(async (QrLinkageData) => {
+              await QrLinkage.update(
+                { 
+                  qr_name: `shopId-${QrLinkageData.shop_id}-qrCode-${QrLinkageData.id}`,
+                },
+                { 
+                 where:{ shop_id: shopId,
+                  qr_name: qrName } 
+                })
+                .then(() => {
+                    response = { success: true, qrLinkageId: QrLinkageData.id};
+                })
+            })
+          });
+
+  } catch (err) {
+    console.log(err);
+    return 'Unhandled Exception!!';    
+  }   
+  return response;
+
+};
+
+DashboardServices.getProductQrCodeList = async(shopId) => {
+  let response;
+  await QrLinkage.findAll({where: { shop_id: shopId }}) 
+    .then(async (QrCodeLinkage) => {
+      if(QrCodeLinkage) {
+        const qrCodeList = []
+        await Promise.all (QrCodeLinkage.map((QrCodeData) => {
+
+          const data = {
+            qr_id: QrCodeData.id,
+            qr_name: QrCodeData.qr_name
+          }
+          qrCodeList.push(data);
+        }));
+        response = { success: true,  qrCodeList: qrCodeList};
+      } else {
+        response = { success: false, qrCodeList: "Product list not found"};
+      }
+    });
+    return response;
+};
+
+DashboardServices.getProductQrCodeDetails = async (productInfoId) => {
+  let response;
+   await QrLinkage.findOne({where:{ id: productInfoId }})
+    .then(async (QrLink) => {
+      if(QrLink) {
+        response = await DashboardServices.getProductDetails(QrLink.product_id, QrLink.shop_id);
+      } else {
+        return "Product not found";
+      }
+    });
+  return response;
 };
 module.exports = DashboardServices;
